@@ -315,7 +315,7 @@ func (this *instagram) TagFeed(tag, maxId string) (*TagFeed, error) {
 		return nil, errors.New("Not logged in.")
 	}
 
-	endpoint := fmt.Sprintf("%s/feed/tag/%s/?rank_token=%s&ranked_content=false&max_id=%s",
+	endpoint := fmt.Sprintf("%s/feed/tag/%s/?rank_token=%s&ranked_content=false&max_id=%s&",
 		API_URL, tag, this.rankToken, maxId)
 
 	resp, err := this.request("GET", endpoint, nil)

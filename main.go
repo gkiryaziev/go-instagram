@@ -57,16 +57,24 @@ func main() {
 	// 1185555018460539520_298705361 70
 	// 1185528481900579684_1734629785 106
 
-	feed, err := instagram.TagFeed("trendever", "")
-	checkError(err)
+	NextMaxID := ""
 
-	fmt.Println("NumResults:", feed.NumResults)
+	for i:=0; i<10; i++ {
 
-	for _, v := range feed.Items {
-		fmt.Println("ID:", v.ID, "LikeCount:", v.LikeCount, "Username:", v.User.Username)
+		feed, err := instagram.TagFeed("trendever", NextMaxID)
+		checkError(err)
+
+		fmt.Println("NumResults:", feed.NumResults)
+
+		for _, v := range feed.Items {
+			fmt.Println("ID:", v.ID, "LikeCount:", v.LikeCount, "Username:", v.User.Username)
+		}
+
+		fmt.Println("NextMaxID:", feed.NextMaxID)
+
+		NextMaxID = feed.NextMaxID
+
 	}
-
-	fmt.Println("NextMaxID:", feed.NextMaxID)
 
 	//comment, err := instagram.GetMediaComments("1185528481900579684_1734629785")
 	//fmt.Println(comment.Caption.Text)
