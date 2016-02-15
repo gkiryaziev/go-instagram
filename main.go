@@ -40,6 +40,11 @@ func main() {
 	//info, err := instagram.GetUserNameInfo(1934125366)
 	//fmt.Println(info.User.MediaCount)
 
-	instagram.GetUserTags(1934125366)
-	//fmt.Println(activ)
+	//tags, err := instagram.GetUserTags(1934125366)
+	//checkError(err)
+	//fmt.Println(tags)
+
+	instagram.SearchTags("trendever")
+	//checkError(err)
+	//fmt.Println(tags)
 }

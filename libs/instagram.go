@@ -8,7 +8,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"io/ioutil"
+	//"io/ioutil"
 )
 
 type instagram struct {
@@ -249,7 +249,7 @@ func (this *instagram) GetUserNameInfo(userNameId int64) (*UserNameInfo, error) 
 	return userNameInfo, nil
 }
 
-// Get user tags
+// Get user tags.
 func (this *instagram) GetUserTags(userNameId int64) (*UserTags, error) {
 
 	if !this.isLoggedIn {
@@ -276,11 +276,41 @@ func (this *instagram) GetUserTags(userNameId int64) (*UserTags, error) {
 		return nil, errors.New(userTags.Message)
 	}
 
-	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println(string(body))
-
 	return userTags, nil
 }
+
+// Search tags.
+func (this *instagram) SearchTags(query string) (*SearchTags, error) {
+
+	if !this.isLoggedIn {
+		return nil, errors.New("Not logged in.")
+	}
+
+	endpoint := fmt.Sprintf("%s/tags/search/?is_typeahead=true&q=%s&rank_token=%s",
+		API_URL, query, this.rankToken)
+
+	resp, err := this.request("GET", endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var searchTags *SearchTags
+	decoder := json.NewDecoder(resp.Body)
+	err = decoder.Decode(&searchTags)
+	if err != nil {
+		return nil, err
+	}
+
+	if searchTags.Status == "fail" {
+		return nil, errors.New(searchTags.Message)
+	}
+
+	return searchTags, nil
+}
+
+//body, _ := ioutil.ReadAll(resp.Body)
+//fmt.Println(string(body))
 
 func (this *instagram) request(method, endpoint string, body io.Reader) (*http.Response, error) {
 	client := &http.Client{}
