@@ -122,7 +122,7 @@ func (this *instagram) Login() error {
 func (this *instagram) GetMediaLikers(mediaId string) (*MediaLikers, error) {
 
 	if !this.isLoggedIn {
-		return nil, errors.New("Not logged in")
+		return nil, errors.New("Not logged in.")
 	}
 
 	endpoint := fmt.Sprintf("%s/media/%s/likers/?", API_URL, mediaId)
@@ -141,7 +141,6 @@ func (this *instagram) GetMediaLikers(mediaId string) (*MediaLikers, error) {
 	}
 
 	if likes.Status == "fail" {
-		this.isLoggedIn = false
 		return nil, errors.New(likes.Message)
 	}
 
@@ -152,7 +151,7 @@ func (this *instagram) GetMediaLikers(mediaId string) (*MediaLikers, error) {
 func (this *instagram) GetMediaComments(mediaId string) (*MediaComments, error) {
 
 	if !this.isLoggedIn {
-		return nil, errors.New("Not logged in")
+		return nil, errors.New("Not logged in.")
 	}
 
 	endpoint := fmt.Sprintf("%s/media/%s/comments/?", API_URL, mediaId)
@@ -171,7 +170,6 @@ func (this *instagram) GetMediaComments(mediaId string) (*MediaComments, error) 
 	}
 
 	if mediaComments.Status == "fail" {
-		this.isLoggedIn = false
 		return nil, errors.New(mediaComments.Message)
 	}
 
@@ -182,7 +180,7 @@ func (this *instagram) GetMediaComments(mediaId string) (*MediaComments, error) 
 func (this *instagram) GetRecentActivity() (*RecentActivity, error) {
 
 	if !this.isLoggedIn {
-		return nil, errors.New("Not logged in")
+		return nil, errors.New("Not logged in.")
 	}
 
 	endpoint := API_URL + "/news/inbox/?"
@@ -201,7 +199,6 @@ func (this *instagram) GetRecentActivity() (*RecentActivity, error) {
 	}
 
 	if recentActivity.Status == "fail" {
-		this.isLoggedIn = false
 		return nil, errors.New(recentActivity.Message)
 	}
 
@@ -212,7 +209,7 @@ func (this *instagram) GetRecentActivity() (*RecentActivity, error) {
 func (this *instagram) SearchUsers(query string) (*SearchUsers, error) {
 
 	if !this.isLoggedIn {
-		return nil, errors.New("Not logged in")
+		return nil, errors.New("Not logged in.")
 	}
 
 	endpoint := API_URL + "/users/search/?ig_sig_key_version=" + SIG_KEY_VERSION +
@@ -232,7 +229,6 @@ func (this *instagram) SearchUsers(query string) (*SearchUsers, error) {
 	}
 
 	if searchUsers.Status == "fail" {
-		this.isLoggedIn = false
 		return nil, errors.New(searchUsers.Message)
 	}
 
@@ -243,7 +239,7 @@ func (this *instagram) SearchUsers(query string) (*SearchUsers, error) {
 func (this *instagram) GetUserNameInfo(userNameId int64) (*UserNameInfo, error) {
 
 	if !this.isLoggedIn {
-		return nil, errors.New("Not logged in")
+		return nil, errors.New("Not logged in.")
 	}
 
 	endpoint := fmt.Sprintf("%s/users/%d/info/?", API_URL, userNameId)
@@ -262,7 +258,6 @@ func (this *instagram) GetUserNameInfo(userNameId int64) (*UserNameInfo, error) 
 	}
 
 	if userNameInfo.Status == "fail" {
-		this.isLoggedIn = false
 		return nil, errors.New(userNameInfo.Message)
 	}
 
