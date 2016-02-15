@@ -54,7 +54,26 @@ func main() {
 	//	}
 	//}
 
-	feed, err := instagram.TagFeed("trendever")
+	// 1185555018460539520_298705361 70
+	// 1185528481900579684_1734629785 106
+
+	feed, err := instagram.TagFeed("trendever", "")
 	checkError(err)
-	fmt.Println(feed)
+
+	fmt.Println("NumResults:", feed.NumResults)
+
+	for _, v := range feed.Items {
+		fmt.Println("ID:", v.ID, "LikeCount:", v.LikeCount, "Username:", v.User.Username)
+	}
+
+	fmt.Println("NextMaxID:", feed.NextMaxID)
+
+	//comment, err := instagram.GetMediaComments("1185528481900579684_1734629785")
+	//fmt.Println(comment.Caption.Text)
+	//likers, err := instagram.GetMediaLikers("1185528481900579684_1734629785")
+	//fmt.Println("UserCount", likers.UserCount)
+	//for _, v := range likers.Users {
+	//	fmt.Println(v.Username)
+	//}
+
 }

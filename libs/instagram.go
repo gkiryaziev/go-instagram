@@ -309,14 +309,14 @@ func (this *instagram) SearchTags(query string) (*SearchTags, error) {
 }
 
 // Get tagged media.
-func (this *instagram) TagFeed(tag string) (*TagFeed, error) {
+func (this *instagram) TagFeed(tag, maxId string) (*TagFeed, error) {
 
 	if !this.isLoggedIn {
 		return nil, errors.New("Not logged in.")
 	}
 
-	endpoint := fmt.Sprintf("%s/feed/tag/%s/?rank_token=%s&ranked_content=true&",
-		API_URL, tag, this.rankToken)
+	endpoint := fmt.Sprintf("%s/feed/tag/%s/?rank_token=%s&ranked_content=false&max_id=%s",
+		API_URL, tag, this.rankToken, maxId)
 
 	resp, err := this.request("GET", endpoint, nil)
 	if err != nil {
