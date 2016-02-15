@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"fmt"
+	"fmt"
 	"log"
 
 	"./libs"
@@ -44,7 +44,17 @@ func main() {
 	//checkError(err)
 	//fmt.Println(tags)
 
-	instagram.SearchTags("trendever")
+	//tags, err := instagram.SearchTags("trendever")
 	//checkError(err)
-	//fmt.Println(tags)
+	//for _, t := range tags.Results {
+	//	if t.Name == "trendever" {
+	//		fmt.Println("Name:", t.Name)
+	//		fmt.Println("ID:", t.ID)
+	//		fmt.Println("Media Count:", t.MediaCount)
+	//	}
+	//}
+
+	feed, err := instagram.TagFeed("trendever")
+	checkError(err)
+	fmt.Println(feed)
 }

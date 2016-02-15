@@ -8,7 +8,6 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	//"io/ioutil"
 )
 
 type instagram struct {
@@ -309,8 +308,35 @@ func (this *instagram) SearchTags(query string) (*SearchTags, error) {
 	return searchTags, nil
 }
 
-//body, _ := ioutil.ReadAll(resp.Body)
-//fmt.Println(string(body))
+// Get tagged media.
+func (this *instagram) TagFeed(tag string) (*TagFeed, error) {
+
+	if !this.isLoggedIn {
+		return nil, errors.New("Not logged in.")
+	}
+
+	endpoint := fmt.Sprintf("%s/feed/tag/%s/?rank_token=%s&ranked_content=true&",
+		API_URL, tag, this.rankToken)
+
+	resp, err := this.request("GET", endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var tagFeed *TagFeed
+	decoder := json.NewDecoder(resp.Body)
+	err = decoder.Decode(&tagFeed)
+	if err != nil {
+		return nil, err
+	}
+
+	if tagFeed.Status == "fail" {
+		return nil, errors.New(tagFeed.Message)
+	}
+
+	return tagFeed, nil
+}
 
 func (this *instagram) request(method, endpoint string, body io.Reader) (*http.Response, error) {
 	client := &http.Client{}
