@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"./libs"
+	"time"
 )
 
 func checkError(err error) {
@@ -57,24 +58,36 @@ func main() {
 	// 1185555018460539520_298705361 70
 	// 1185528481900579684_1734629785 106
 
-	NextMaxID := ""
+	start := time.Now()
 
-	for i := 0; i < 2; i++ {
+	NextMaxID := ""
+	sum := 0
+
+	loop := true
+
+	for loop {
 
 		feed, err := instagram.TagFeed("trendever", NextMaxID)
 		checkError(err)
 
+		sum += feed.NumResults
+		loop = feed.MoreAvailable
+
 		fmt.Println("NumResults:", feed.NumResults)
+		fmt.Println("MoreAvailable:", feed.MoreAvailable)
 
-		for _, v := range feed.Items {
-			fmt.Println("ID:", v.ID, "LikeCount:", v.LikeCount, "Username:", v.User.Username)
-		}
-
-		fmt.Println("NextMaxID:", feed.NextMaxID)
+		//for _, v := range feed.Items {
+		//	fmt.Println("ID:", v.ID, "LikeCount:", v.LikeCount, "Username:", v.User.Username)
+		//}
+		//
+		//fmt.Println("NextMaxID:", feed.NextMaxID)
 
 		NextMaxID = feed.NextMaxID
 
 	}
+
+	fmt.Println("Sum:", sum)
+	fmt.Println("Elapsed:", time.Since(start))
 
 	//comment, err := instagram.GetMediaComments("1185528481900579684_1734629785")
 	//fmt.Println(comment.Caption.Text)
