@@ -59,7 +59,7 @@ func main() {
 
 	NextMaxID := ""
 
-	for i:=0; i<10; i++ {
+	for i := 0; i < 2; i++ {
 
 		feed, err := instagram.TagFeed("trendever", NextMaxID)
 		checkError(err)
@@ -83,5 +83,4 @@ func main() {
 	//for _, v := range likers.Users {
 	//	fmt.Println(v.Username)
 	//}
-
 }

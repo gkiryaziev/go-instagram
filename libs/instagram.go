@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -39,7 +38,7 @@ func NewInstagram(userName, password string) *instagram {
 // Login to Instagram.
 func (this *instagram) Login() error {
 
-	fetch := fmt.Sprintf("%s/si/fetch_headers/?challenge_type=signup&guid=%s", API_URL, generateUUID(false))
+	fetch := API_URL + "/si/fetch_headers/?challenge_type=signup&guid=" + generateUUID(false)
 
 	resp, err := this.request("GET", fetch, nil)
 	if err != nil {
@@ -109,7 +108,7 @@ func (this *instagram) GetMediaLikers(mediaId string) (*MediaLikers, error) {
 		return nil, errors.New("Not logged in.")
 	}
 
-	endpoint := fmt.Sprintf("%s/media/%s/likers/?", API_URL, mediaId)
+	endpoint := API_URL + "/media/" + mediaId + "/likers/?"
 
 	resp, err := this.request("GET", endpoint, nil)
 	if err != nil {
@@ -138,7 +137,7 @@ func (this *instagram) GetMediaComments(mediaId string) (*MediaComments, error) 
 		return nil, errors.New("Not logged in.")
 	}
 
-	endpoint := fmt.Sprintf("%s/media/%s/comments/?", API_URL, mediaId)
+	endpoint := API_URL + "/media/" + mediaId + "/comments/?"
 
 	resp, err := this.request("GET", endpoint, nil)
 	if err != nil {
@@ -226,7 +225,7 @@ func (this *instagram) GetUserNameInfo(userNameId int64) (*UserNameInfo, error) 
 		return nil, errors.New("Not logged in.")
 	}
 
-	endpoint := fmt.Sprintf("%s/users/%d/info/?", API_URL, userNameId)
+	endpoint := API_URL + "/users/" + strconv.FormatInt(userNameId, 10) + "/info/?"
 
 	resp, err := this.request("GET", endpoint, nil)
 	if err != nil {
@@ -255,8 +254,8 @@ func (this *instagram) GetUserTags(userNameId int64) (*UserTags, error) {
 		return nil, errors.New("Not logged in.")
 	}
 
-	endpoint := fmt.Sprintf("%s/usertags/%d/feed/?rank_token=%s&ranked_content=true&",
-		API_URL, userNameId, this.rankToken)
+	endpoint := API_URL + "/usertags/" + strconv.FormatInt(userNameId, 10) + "/feed/?rank_token=" +
+		this.rankToken + "&ranked_content=false"
 
 	resp, err := this.request("GET", endpoint, nil)
 	if err != nil {
@@ -285,8 +284,7 @@ func (this *instagram) SearchTags(query string) (*SearchTags, error) {
 		return nil, errors.New("Not logged in.")
 	}
 
-	endpoint := fmt.Sprintf("%s/tags/search/?is_typeahead=true&q=%s&rank_token=%s",
-		API_URL, query, this.rankToken)
+	endpoint := API_URL + "/tags/search/?is_typeahead=true&q=" + query + "&rank_token=" + this.rankToken
 
 	resp, err := this.request("GET", endpoint, nil)
 	if err != nil {
@@ -315,8 +313,7 @@ func (this *instagram) TagFeed(tag, maxId string) (*TagFeed, error) {
 		return nil, errors.New("Not logged in.")
 	}
 
-	endpoint := fmt.Sprintf("%s/feed/tag/%s/?rank_token=%s&ranked_content=false&max_id=%s&",
-		API_URL, tag, this.rankToken, maxId)
+	endpoint := API_URL + "/feed/tag/" + tag + "/?rank_token=" + this.rankToken + "&ranked_content=false&max_id=" + maxId
 
 	resp, err := this.request("GET", endpoint, nil)
 	if err != nil {
