@@ -34,7 +34,6 @@ func main() {
 		feed, err := instagram.TagFeed("trendever", NextMaxID)
 		checkError(err)
 
-
 		for _, v := range feed.Items {
 			if v.ID == "1184867264115104516_2322756141" {
 				fmt.Println("ID:", v.ID, "LikeCount:", v.LikeCount, "Username:", v.User.Username)
@@ -45,7 +44,7 @@ func main() {
 				}
 
 				for _, v := range v.Comments {
-					fmt.Println("<img src=\"" + v.User.ProfilePicURL + "\">", v.User.Username, v.Text)
+					fmt.Println("<img src=\""+v.User.ProfilePicURL+"\">", v.User.Username, v.Text)
 				}
 
 				//likers, err := instagram.GetMediaLikers(v.ID)
