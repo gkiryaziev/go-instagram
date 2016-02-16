@@ -1,4 +1,4 @@
-package libs
+package instagram_api
 
 // Get media likers.
 type MediaLikers struct {

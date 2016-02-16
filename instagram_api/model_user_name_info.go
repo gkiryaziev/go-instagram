@@ -1,4 +1,4 @@
-package libs
+package instagram_api
 
 // Get username info.
 type UserNameInfo struct {

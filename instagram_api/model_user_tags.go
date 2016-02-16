@@ -1,4 +1,4 @@
-package libs
+package instagram_api
 
 // Get user tags
 type UserTags struct {

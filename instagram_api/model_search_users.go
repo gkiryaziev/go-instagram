@@ -1,4 +1,4 @@
-package libs
+package instagram_api
 
 // Search users.
 type SearchUsers struct {

@@ -1,4 +1,4 @@
-package libs
+package instagram_api
 
 import (
 	"bytes"
@@ -10,28 +10,30 @@ import (
 )
 
 type instagram struct {
-	userName   string
-	password   string
-	token      string
-	isLoggedIn bool
-	uuid       string
-	deviceId   string
-	userNameId int64
-	rankToken  string
-	cookies    []*http.Cookie
+	userName          string
+	password          string
+	token             string
+	isLoggedIn        bool
+	uuid              string
+	deviceId          string
+	userNameId        int64
+	rankToken         string
+	cookies           []*http.Cookie
+	LoginAttemptCount int
 }
 
 func NewInstagram(userName, password string) *instagram {
 	return &instagram{
-		userName:   userName,
-		password:   password,
-		token:      "",
-		isLoggedIn: false,
-		uuid:       generateUUID(true),
-		deviceId:   generateDeviceId(),
-		userNameId: 0,
-		rankToken:  "",
-		cookies:    nil,
+		userName:          userName,
+		password:          password,
+		token:             "",
+		isLoggedIn:        false,
+		uuid:              generateUUID(true),
+		deviceId:          generateDeviceId(),
+		userNameId:        0,
+		rankToken:         "",
+		cookies:           nil,
+		LoginAttemptCount: 0,
 	}
 }
 

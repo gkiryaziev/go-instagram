@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"./libs"
+	"./instagram_api"
 	"time"
 )
 
@@ -16,8 +16,7 @@ func checkError(err error) {
 
 func main() {
 
-	instagram := libs.NewInstagram("gkiryaziev", "instagramAdm1n")
-
+	instagram := instagram_api.NewInstagram("gkiryaziev", "instagramAdm1n")
 	err := instagram.Login()
 	checkError(err)
 
@@ -35,6 +34,7 @@ func main() {
 		feed, err := instagram.TagFeed("trendever", NextMaxID)
 		checkError(err)
 
+
 		for _, v := range feed.Items {
 			if v.ID == "1184867264115104516_2322756141" {
 				fmt.Println("ID:", v.ID, "LikeCount:", v.LikeCount, "Username:", v.User.Username)
@@ -49,7 +49,7 @@ func main() {
 				}
 
 				//likers, err := instagram.GetMediaLikers(v.ID)
-				//checkError(err)
+				//instagramError(err)
 				//fmt.Println("\tUserCount:", likers.UserCount)
 				//for _, v := range likers.Users {
 				//	fmt.Println("\t", v.Username)

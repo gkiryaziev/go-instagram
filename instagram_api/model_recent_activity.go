@@ -1,4 +1,4 @@
-package libs
+package instagram_api
 
 // Get recent activity.
 type RecentActivity struct {

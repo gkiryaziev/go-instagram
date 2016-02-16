@@ -1,4 +1,4 @@
-package libs
+package instagram_api
 
 // Login to Instagram.
 type Login struct {
