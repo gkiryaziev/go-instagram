@@ -14,9 +14,6 @@ func checkError(err error) {
 	}
 }
 
-//1934125366 makeup_manikur
-//2940280567 gkiryaziev
-
 func main() {
 
 	instagram := libs.NewInstagram("gkiryaziev", "instagramAdm1n")
@@ -24,76 +21,51 @@ func main() {
 	err := instagram.Login()
 	checkError(err)
 
-	//users, err := instagram.SearchUsers("gkiryaziev")
-	//checkError(err)
-	//
-	//fmt.Println("Status:", users.Status)
-	//fmt.Println("Count:", users.NumResults)
-	//for _, user := range users.Users {
-	//	if user.Username == "gkiryaziev" {
-	//		fmt.Println("\tPK:", user.Pk)
-	//		fmt.Println("\tUser Name:", user.Username)
-	//		fmt.Println("\tPicture:", user.ProfilePicURL)
-	//		fmt.Println()
-	//	}
-	//}
-
-	//info, err := instagram.GetUserNameInfo(1934125366)
-	//fmt.Println(info.User.MediaCount)
-
-	//tags, err := instagram.GetUserTags(1934125366)
-	//checkError(err)
-	//fmt.Println(tags)
-
-	//tags, err := instagram.SearchTags("trendever")
-	//checkError(err)
-	//for _, t := range tags.Results {
-	//	if t.Name == "trendever" {
-	//		fmt.Println("Name:", t.Name)
-	//		fmt.Println("ID:", t.ID)
-	//		fmt.Println("Media Count:", t.MediaCount)
-	//	}
-	//}
-
-	// 1185555018460539520_298705361 70
-	// 1185528481900579684_1734629785 106
-
 	start := time.Now()
 
 	NextMaxID := ""
-	sum := 0
+	mediaSum := 0
+	likersSum := 0
 
-	loop := true
+	//loop := true
 
-	for loop {
+	for i := 0; i < 1; i++ {
+		//for loop {
 
 		feed, err := instagram.TagFeed("trendever", NextMaxID)
 		checkError(err)
 
-		sum += feed.NumResults
-		loop = feed.MoreAvailable
+		for _, v := range feed.Items {
+			if v.ID == "1184867264115104516_2322756141" {
+				fmt.Println("ID:", v.ID, "LikeCount:", v.LikeCount, "Username:", v.User.Username)
+				for _, v := range v.ImageVersions2.Candidates {
+					if v.Width == 240 && v.Height == 240 {
+						fmt.Println("<img src=\"" + v.URL + "\">")
+					}
+				}
 
-		fmt.Println("NumResults:", feed.NumResults)
-		fmt.Println("MoreAvailable:", feed.MoreAvailable)
+				for _, v := range v.Comments {
+					fmt.Println("<img src=\"" + v.User.ProfilePicURL + "\">", v.User.Username, v.Text)
+				}
 
-		//for _, v := range feed.Items {
-		//	fmt.Println("ID:", v.ID, "LikeCount:", v.LikeCount, "Username:", v.User.Username)
-		//}
-		//
-		//fmt.Println("NextMaxID:", feed.NextMaxID)
+				//likers, err := instagram.GetMediaLikers(v.ID)
+				//checkError(err)
+				//fmt.Println("\tUserCount:", likers.UserCount)
+				//for _, v := range likers.Users {
+				//	fmt.Println("\t", v.Username)
+				//}
+				//likersSum += likers.UserCount
+			}
+		}
 
+		mediaSum += feed.NumResults
+		//loop = feed.MoreAvailable
 		NextMaxID = feed.NextMaxID
-
 	}
 
-	fmt.Println("Sum:", sum)
+	fmt.Println("------------------------")
+	fmt.Println("Media Sum:", mediaSum)
+	fmt.Println("Likers Sum:", likersSum)
 	fmt.Println("Elapsed:", time.Since(start))
 
-	//comment, err := instagram.GetMediaComments("1185528481900579684_1734629785")
-	//fmt.Println(comment.Caption.Text)
-	//likers, err := instagram.GetMediaLikers("1185528481900579684_1734629785")
-	//fmt.Println("UserCount", likers.UserCount)
-	//for _, v := range likers.Users {
-	//	fmt.Println(v.Username)
-	//}
 }
