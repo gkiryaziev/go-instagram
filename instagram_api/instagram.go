@@ -19,7 +19,6 @@ type instagram struct {
 	userNameId        int64
 	rankToken         string
 	cookies           []*http.Cookie
-	LoginAttemptCount int
 }
 
 func NewInstagram(userName, password string) *instagram {
@@ -33,7 +32,6 @@ func NewInstagram(userName, password string) *instagram {
 		userNameId:        0,
 		rankToken:         "",
 		cookies:           nil,
-		LoginAttemptCount: 0,
 	}
 }
 
@@ -56,7 +54,7 @@ func (this *instagram) Login() error {
 	}
 
 	// login
-	data := &Login{
+	login := &Login{
 		DeviceId:          this.deviceId,
 		Guid:              this.uuid,
 		UserName:          this.userName,
@@ -65,7 +63,7 @@ func (this *instagram) Login() error {
 		LoginAttemptCount: "0",
 	}
 
-	jsonData, err := json.Marshal(data)
+	jsonData, err := json.Marshal(login)
 	if err != nil {
 		return err
 	}
@@ -85,19 +83,18 @@ func (this *instagram) Login() error {
 	}
 	this.cookies = resp.Cookies()
 
-	var loginResponse *LoginResponse
+	var object *LoginResponse
 	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&loginResponse)
+	err = decoder.Decode(&object)
 	if err != nil {
 		return err
 	}
 
-	if loginResponse.Status == "fail" {
-		return errors.New(loginResponse.Message)
+	if object.Status == "fail" {
+		return errors.New(object.Message)
 	}
 
-	this.isLoggedIn = true
-	this.userNameId = loginResponse.LoggedInUser.Pk
+	this.userNameId = object.LoggedInUser.Pk
 	this.rankToken = strconv.FormatInt(this.userNameId, 10) + "_" + this.uuid
 
 	return nil
@@ -105,10 +102,6 @@ func (this *instagram) Login() error {
 
 // Get media likers.
 func (this *instagram) GetMediaLikers(mediaId string) (*MediaLikers, error) {
-
-	if !this.isLoggedIn {
-		return nil, errors.New("Not logged in.")
-	}
 
 	endpoint := API_URL + "/media/" + mediaId + "/likers/?"
 
@@ -118,26 +111,22 @@ func (this *instagram) GetMediaLikers(mediaId string) (*MediaLikers, error) {
 	}
 	defer resp.Body.Close()
 
-	var likes *MediaLikers
+	var object *MediaLikers
 	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&likes)
+	err = decoder.Decode(&object)
 	if err != nil {
 		return nil, err
 	}
 
-	if likes.Status == "fail" {
-		return nil, errors.New(likes.Message)
+	if object.Status == "fail" {
+		return nil, errors.New(object.Message)
 	}
 
-	return likes, nil
+	return object, nil
 }
 
 // Get media comments.
 func (this *instagram) GetMediaComments(mediaId string) (*MediaComments, error) {
-
-	if !this.isLoggedIn {
-		return nil, errors.New("Not logged in.")
-	}
 
 	endpoint := API_URL + "/media/" + mediaId + "/comments/?"
 
@@ -147,26 +136,22 @@ func (this *instagram) GetMediaComments(mediaId string) (*MediaComments, error) 
 	}
 	defer resp.Body.Close()
 
-	var mediaComments *MediaComments
+	var object *MediaComments
 	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&mediaComments)
+	err = decoder.Decode(&object)
 	if err != nil {
 		return nil, err
 	}
 
-	if mediaComments.Status == "fail" {
-		return nil, errors.New(mediaComments.Message)
+	if object.Status == "fail" {
+		return nil, errors.New(object.Message)
 	}
 
-	return mediaComments, nil
+	return object, nil
 }
 
 // Get recent activity.
 func (this *instagram) GetRecentActivity() (*RecentActivity, error) {
-
-	if !this.isLoggedIn {
-		return nil, errors.New("Not logged in.")
-	}
 
 	endpoint := API_URL + "/news/inbox/?"
 
@@ -176,26 +161,22 @@ func (this *instagram) GetRecentActivity() (*RecentActivity, error) {
 	}
 	defer resp.Body.Close()
 
-	var recentActivity *RecentActivity
+	var object *RecentActivity
 	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&recentActivity)
+	err = decoder.Decode(&object)
 	if err != nil {
 		return nil, err
 	}
 
-	if recentActivity.Status == "fail" {
-		return nil, errors.New(recentActivity.Message)
+	if object.Status == "fail" {
+		return nil, errors.New(object.Message)
 	}
 
-	return recentActivity, nil
+	return object, nil
 }
 
 // Search users.
 func (this *instagram) SearchUsers(query string) (*SearchUsers, error) {
-
-	if !this.isLoggedIn {
-		return nil, errors.New("Not logged in.")
-	}
 
 	endpoint := API_URL + "/users/search/?ig_sig_key_version=" + SIG_KEY_VERSION +
 		"&is_typeahead=true&query=" + query + "&rank_token=" + this.rankToken
@@ -206,26 +187,22 @@ func (this *instagram) SearchUsers(query string) (*SearchUsers, error) {
 	}
 	defer resp.Body.Close()
 
-	var searchUsers *SearchUsers
+	var object *SearchUsers
 	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&searchUsers)
+	err = decoder.Decode(&object)
 	if err != nil {
 		return nil, err
 	}
 
-	if searchUsers.Status == "fail" {
-		return nil, errors.New(searchUsers.Message)
+	if object.Status == "fail" {
+		return nil, errors.New(object.Message)
 	}
 
-	return searchUsers, nil
+	return object, nil
 }
 
 // Get username info.
 func (this *instagram) GetUserNameInfo(userNameId int64) (*UserNameInfo, error) {
-
-	if !this.isLoggedIn {
-		return nil, errors.New("Not logged in.")
-	}
 
 	endpoint := API_URL + "/users/" + strconv.FormatInt(userNameId, 10) + "/info/?"
 
@@ -235,26 +212,22 @@ func (this *instagram) GetUserNameInfo(userNameId int64) (*UserNameInfo, error) 
 	}
 	defer resp.Body.Close()
 
-	var userNameInfo *UserNameInfo
+	var object *UserNameInfo
 	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&userNameInfo)
+	err = decoder.Decode(&object)
 	if err != nil {
 		return nil, err
 	}
 
-	if userNameInfo.Status == "fail" {
-		return nil, errors.New(userNameInfo.Message)
+	if object.Status == "fail" {
+		return nil, errors.New(object.Message)
 	}
 
-	return userNameInfo, nil
+	return object, nil
 }
 
 // Get user tags.
 func (this *instagram) GetUserTags(userNameId int64) (*UserTags, error) {
-
-	if !this.isLoggedIn {
-		return nil, errors.New("Not logged in.")
-	}
 
 	endpoint := API_URL + "/usertags/" + strconv.FormatInt(userNameId, 10) + "/feed/?rank_token=" +
 		this.rankToken + "&ranked_content=false"
@@ -265,26 +238,22 @@ func (this *instagram) GetUserTags(userNameId int64) (*UserTags, error) {
 	}
 	defer resp.Body.Close()
 
-	var userTags *UserTags
+	var object *UserTags
 	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&userTags)
+	err = decoder.Decode(&object)
 	if err != nil {
 		return nil, err
 	}
 
-	if userTags.Status == "fail" {
-		return nil, errors.New(userTags.Message)
+	if object.Status == "fail" {
+		return nil, errors.New(object.Message)
 	}
 
-	return userTags, nil
+	return object, nil
 }
 
 // Search tags.
 func (this *instagram) SearchTags(query string) (*SearchTags, error) {
-
-	if !this.isLoggedIn {
-		return nil, errors.New("Not logged in.")
-	}
 
 	endpoint := API_URL + "/tags/search/?is_typeahead=true&q=" + query + "&rank_token=" + this.rankToken
 
@@ -294,26 +263,22 @@ func (this *instagram) SearchTags(query string) (*SearchTags, error) {
 	}
 	defer resp.Body.Close()
 
-	var searchTags *SearchTags
+	var object *SearchTags
 	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&searchTags)
+	err = decoder.Decode(&object)
 	if err != nil {
 		return nil, err
 	}
 
-	if searchTags.Status == "fail" {
-		return nil, errors.New(searchTags.Message)
+	if object.Status == "fail" {
+		return nil, errors.New(object.Message)
 	}
 
-	return searchTags, nil
+	return object, nil
 }
 
 // Get tagged media.
 func (this *instagram) TagFeed(tag, maxId string) (*TagFeed, error) {
-
-	if !this.isLoggedIn {
-		return nil, errors.New("Not logged in.")
-	}
 
 	endpoint := API_URL + "/feed/tag/" + tag + "/?rank_token=" + this.rankToken + "&ranked_content=false&max_id=" + maxId
 
@@ -323,18 +288,18 @@ func (this *instagram) TagFeed(tag, maxId string) (*TagFeed, error) {
 	}
 	defer resp.Body.Close()
 
-	var tagFeed *TagFeed
+	var object *TagFeed
 	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&tagFeed)
+	err = decoder.Decode(&object)
 	if err != nil {
 		return nil, err
 	}
 
-	if tagFeed.Status == "fail" {
-		return nil, errors.New(tagFeed.Message)
+	if object.Status == "fail" {
+		return nil, errors.New(object.Message)
 	}
 
-	return tagFeed, nil
+	return object, nil
 }
 
 func (this *instagram) request(method, endpoint string, body io.Reader) (*http.Response, error) {

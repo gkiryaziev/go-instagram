@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"./instagram_api"
-	"time"
 )
 
 func checkError(err error) {
@@ -16,6 +16,7 @@ func checkError(err error) {
 
 func main() {
 
+	// login_required
 	instagram := instagram_api.NewInstagram("gkiryaziev", "instagramAdm1n")
 	err := instagram.Login()
 	checkError(err)
