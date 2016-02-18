@@ -17,7 +17,7 @@ func checkError(err error) {
 func main() {
 
 	// login_required
-	instagram := instagram_api.NewInstagram("gkiryaziev", "instagramAdm1n")
+	instagram := instagram_api.NewInstagram("********", "***********")
 	err := instagram.Login()
 	checkError(err)
 
