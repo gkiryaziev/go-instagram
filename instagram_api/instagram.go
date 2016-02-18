@@ -21,8 +21,8 @@ type instagram struct {
 	cookies    []*http.Cookie
 }
 
-func NewInstagram(userName, password string) *instagram {
-	return &instagram {
+func NewInstagram(userName, password string) (*instagram, error) {
+	i := &instagram {
 		userName:   userName,
 		password:   password,
 		token:      "",
@@ -33,6 +33,13 @@ func NewInstagram(userName, password string) *instagram {
 		rankToken:  "",
 		cookies:    nil,
 	}
+
+	err := i.Login()
+	if err != nil {
+		return nil, err
+	}
+
+	return i, nil
 }
 
 // Login to Instagram.
