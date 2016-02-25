@@ -1,7 +1,7 @@
 package instagram_api
 
 // Get media comments.
-type MediaComments struct {
+type Media struct {
 	Status          string `json:"status"`
 	CaptionIsEdited bool   `json:"caption_is_edited"`
 	HasMoreComments bool   `json:"has_more_comments"`

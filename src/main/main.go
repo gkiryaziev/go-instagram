@@ -5,7 +5,8 @@ import (
 	"log"
 	"time"
 
-	"./instagram_api"
+	"conf"
+	"instagram_api"
 )
 
 func checkError(err error) {
@@ -16,8 +17,13 @@ func checkError(err error) {
 
 func main() {
 
+	settings := conf.GetSettings()
+
 	// login_required
-	instagram, err := instagram_api.NewInstagram("gkiryaziev", "InstagramAdm1n")
+	instagram, err := instagram_api.NewInstagram(
+		settings.Main.Instagram.Login,
+		settings.Main.Instagram.Password,
+	)
 	checkError(err)
 
 	start := time.Now()
@@ -31,7 +37,7 @@ func main() {
 	for i := 0; i < 1; i++ {
 		//for loop {
 
-		feed, err := instagram.TagFeed("trendever", NextMaxID)
+		feed, err := instagram.TagFeed("friends", NextMaxID)
 		checkError(err)
 
 		for _, v := range feed.Items {

@@ -7,6 +7,8 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"io/ioutil"
+	"time"
 )
 
 type instagram struct {
@@ -22,7 +24,7 @@ type instagram struct {
 }
 
 func NewInstagram(userName, password string) (*instagram, error) {
-	i := &instagram {
+	i := &instagram{
 		userName:   userName,
 		password:   password,
 		token:      "",
@@ -47,7 +49,7 @@ func (this *instagram) Login() error {
 
 	fetch := API_URL + "/si/fetch_headers/?challenge_type=signup&guid=" + generateUUID(false)
 
-	resp, err := this.request("GET", fetch, nil)
+	resp, err := this.requestLogin("GET", fetch, nil)
 	if err != nil {
 		return err
 	}
@@ -77,10 +79,11 @@ func (this *instagram) Login() error {
 
 	signature := generateSignature(jsonData)
 
-	resp, err = this.request("POST", API_URL+"/accounts/login/?", bytes.NewReader([]byte(signature)))
+	resp, err = this.requestLogin("POST", API_URL+"/accounts/login/?", bytes.NewReader([]byte(signature)))
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
 	// get new csrftoken
 	for _, cookie := range resp.Cookies() {
@@ -116,24 +119,18 @@ func (this *instagram) GetMediaLikers(mediaId string) (*MediaLikers, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	var object *MediaLikers
-	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&object)
+	err = json.Unmarshal(resp, &object)
 	if err != nil {
 		return nil, err
-	}
-
-	if object.Status == "fail" {
-		return nil, errors.New(object.Message)
 	}
 
 	return object, nil
 }
 
 // Get media comments.
-func (this *instagram) GetMediaComments(mediaId string) (*MediaComments, error) {
+func (this *instagram) GetMedia(mediaId string) (*Media, error) {
 
 	endpoint := API_URL + "/media/" + mediaId + "/comments/?"
 
@@ -141,17 +138,11 @@ func (this *instagram) GetMediaComments(mediaId string) (*MediaComments, error) 
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
-	var object *MediaComments
-	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&object)
+	var object *Media
+	err = json.Unmarshal(resp, &object)
 	if err != nil {
 		return nil, err
-	}
-
-	if object.Status == "fail" {
-		return nil, errors.New(object.Message)
 	}
 
 	return object, nil
@@ -166,17 +157,11 @@ func (this *instagram) GetRecentActivity() (*RecentActivity, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	var object *RecentActivity
-	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&object)
+	err = json.Unmarshal(resp, &object)
 	if err != nil {
 		return nil, err
-	}
-
-	if object.Status == "fail" {
-		return nil, errors.New(object.Message)
 	}
 
 	return object, nil
@@ -192,17 +177,11 @@ func (this *instagram) SearchUsers(query string) (*SearchUsers, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	var object *SearchUsers
-	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&object)
+	err = json.Unmarshal(resp, &object)
 	if err != nil {
 		return nil, err
-	}
-
-	if object.Status == "fail" {
-		return nil, errors.New(object.Message)
 	}
 
 	return object, nil
@@ -217,17 +196,11 @@ func (this *instagram) GetUserNameInfo(userNameId int64) (*UserNameInfo, error) 
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	var object *UserNameInfo
-	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&object)
+	err = json.Unmarshal(resp, &object)
 	if err != nil {
 		return nil, err
-	}
-
-	if object.Status == "fail" {
-		return nil, errors.New(object.Message)
 	}
 
 	return object, nil
@@ -243,17 +216,11 @@ func (this *instagram) GetUserTags(userNameId int64) (*UserTags, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	var object *UserTags
-	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&object)
+	err = json.Unmarshal(resp, &object)
 	if err != nil {
 		return nil, err
-	}
-
-	if object.Status == "fail" {
-		return nil, errors.New(object.Message)
 	}
 
 	return object, nil
@@ -268,17 +235,11 @@ func (this *instagram) SearchTags(query string) (*SearchTags, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	var object *SearchTags
-	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&object)
+	err = json.Unmarshal(resp, &object)
 	if err != nil {
 		return nil, err
-	}
-
-	if object.Status == "fail" {
-		return nil, errors.New(object.Message)
 	}
 
 	return object, nil
@@ -293,23 +254,33 @@ func (this *instagram) TagFeed(tag, maxId string) (*TagFeed, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	var object *TagFeed
-	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&object)
+	err = json.Unmarshal(resp, &object)
 	if err != nil {
 		return nil, err
-	}
-
-	if object.Status == "fail" {
-		return nil, errors.New(object.Message)
 	}
 
 	return object, nil
 }
 
-func (this *instagram) request(method, endpoint string, body io.Reader) (*http.Response, error) {
+// Request for Login method. Needs to get the authorization cookies.
+func (this *instagram) requestLogin(method, endpoint string, body io.Reader) (*http.Response, error) {
+	client := &http.Client{}
+	req, err := http.NewRequest(method, endpoint, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("User-Agent", USER_AGENT)
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+// Main request for all other methods. Reading the authorization cookies.
+func (this *instagram) requestMain(method, endpoint string, body io.Reader) (*http.Response, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest(method, endpoint, body)
 	if err != nil {
@@ -324,4 +295,44 @@ func (this *instagram) request(method, endpoint string, body io.Reader) (*http.R
 		return nil, err
 	}
 	return resp, nil
+}
+
+// Request with five attempts re-login. Re-login if getting error 'login_required'.
+func (this *instagram) request(method, endpoint string, body io.Reader) ([]byte, error) {
+
+	for attempt := 0; attempt < 5; attempt++ {
+
+		resp, err := this.requestMain(method, endpoint, body)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+
+		jsonBody, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		var message *Message
+		err = json.Unmarshal(jsonBody, &message)
+		if err != nil {
+			return nil, err
+		}
+
+		if message.Status == "fail" {
+			if message.Message != "login_required" {
+				return nil, errors.New(message.Message)
+			}
+			// relogin
+			err = this.Login()
+			if err != nil {
+				return nil, err
+			}
+			time.Sleep(time.Millisecond * 500)
+		} else {
+			return jsonBody, nil
+		}
+	}
+
+	return nil, errors.New("max_attempts")
 }

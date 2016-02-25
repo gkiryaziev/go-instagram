@@ -1,0 +1,10 @@
+.idea/
+.git/
+
+bin/
+pkg/
+
+*.xmind
+
+/src/conf/config.yaml
+/config.yaml
