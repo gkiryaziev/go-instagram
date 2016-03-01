@@ -2,6 +2,12 @@
 
 ---
 
+### Installation
+
+`go get -u github.com/gkiryaziev/go_instagram_api`
+
+`gb vendor fetch github.com/gkiryaziev/go_instagram_api`
+
 ### Functions and description
 
 `NewInstagram(userName, password string) (*instagram, error)` Create a new object of Instagram. Constructor takes a `user name` and `password` as arguments and call `Login()` method after a successful initialization.
