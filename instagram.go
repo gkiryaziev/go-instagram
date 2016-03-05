@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"strconv"
-	"io/ioutil"
 	"time"
 )
 
-type instagram struct {
+type Instagram struct {
 	userName   string
 	password   string
 	token      string
@@ -23,8 +23,8 @@ type instagram struct {
 	cookies    []*http.Cookie
 }
 
-func NewInstagram(userName, password string) (*instagram, error) {
-	i := &instagram{
+func NewInstagram(userName, password string) (*Instagram, error) {
+	i := &Instagram{
 		userName:   userName,
 		password:   password,
 		token:      "",
@@ -45,7 +45,7 @@ func NewInstagram(userName, password string) (*instagram, error) {
 }
 
 // Login to Instagram.
-func (this *instagram) Login() error {
+func (this *Instagram) Login() error {
 
 	fetch := API_URL + "/si/fetch_headers/?challenge_type=signup&guid=" + generateUUID(false)
 
@@ -111,7 +111,7 @@ func (this *instagram) Login() error {
 }
 
 // Get media likers.
-func (this *instagram) GetMediaLikers(mediaId string) (*MediaLikers, error) {
+func (this *Instagram) GetMediaLikers(mediaId string) (*MediaLikers, error) {
 
 	endpoint := API_URL + "/media/" + mediaId + "/likers/?"
 
@@ -130,7 +130,7 @@ func (this *instagram) GetMediaLikers(mediaId string) (*MediaLikers, error) {
 }
 
 // Get media comments.
-func (this *instagram) GetMedia(mediaId string) (*Media, error) {
+func (this *Instagram) GetMedia(mediaId string) (*Media, error) {
 
 	endpoint := API_URL + "/media/" + mediaId + "/comments/?"
 
@@ -149,7 +149,7 @@ func (this *instagram) GetMedia(mediaId string) (*Media, error) {
 }
 
 // Get recent activity.
-func (this *instagram) GetRecentActivity() (*RecentActivity, error) {
+func (this *Instagram) GetRecentActivity() (*RecentActivity, error) {
 
 	endpoint := API_URL + "/news/inbox/?"
 
@@ -168,7 +168,7 @@ func (this *instagram) GetRecentActivity() (*RecentActivity, error) {
 }
 
 // Search users.
-func (this *instagram) SearchUsers(query string) (*SearchUsers, error) {
+func (this *Instagram) SearchUsers(query string) (*SearchUsers, error) {
 
 	endpoint := API_URL + "/users/search/?ig_sig_key_version=" + SIG_KEY_VERSION +
 		"&is_typeahead=true&query=" + query + "&rank_token=" + this.rankToken
@@ -188,7 +188,7 @@ func (this *instagram) SearchUsers(query string) (*SearchUsers, error) {
 }
 
 // Get username info.
-func (this *instagram) GetUserNameInfo(userNameId int64) (*UserNameInfo, error) {
+func (this *Instagram) GetUserNameInfo(userNameId int64) (*UserNameInfo, error) {
 
 	endpoint := API_URL + "/users/" + strconv.FormatInt(userNameId, 10) + "/info/?"
 
@@ -207,7 +207,7 @@ func (this *instagram) GetUserNameInfo(userNameId int64) (*UserNameInfo, error) 
 }
 
 // Get user tags.
-func (this *instagram) GetUserTags(userNameId int64) (*UserTags, error) {
+func (this *Instagram) GetUserTags(userNameId int64) (*UserTags, error) {
 
 	endpoint := API_URL + "/usertags/" + strconv.FormatInt(userNameId, 10) + "/feed/?rank_token=" +
 		this.rankToken + "&ranked_content=false"
@@ -227,7 +227,7 @@ func (this *instagram) GetUserTags(userNameId int64) (*UserTags, error) {
 }
 
 // Search tags.
-func (this *instagram) SearchTags(query string) (*SearchTags, error) {
+func (this *Instagram) SearchTags(query string) (*SearchTags, error) {
 
 	endpoint := API_URL + "/tags/search/?is_typeahead=true&q=" + query + "&rank_token=" + this.rankToken
 
@@ -246,7 +246,7 @@ func (this *instagram) SearchTags(query string) (*SearchTags, error) {
 }
 
 // Get tagged media.
-func (this *instagram) TagFeed(tag, maxId string) (*TagFeed, error) {
+func (this *Instagram) TagFeed(tag, maxId string) (*TagFeed, error) {
 
 	endpoint := API_URL + "/feed/tag/" + tag + "/?rank_token=" + this.rankToken + "&ranked_content=false&max_id=" + maxId
 
@@ -265,7 +265,7 @@ func (this *instagram) TagFeed(tag, maxId string) (*TagFeed, error) {
 }
 
 // Request for Login method. Needs to get the authorization cookies.
-func (this *instagram) requestLogin(method, endpoint string, body io.Reader) (*http.Response, error) {
+func (this *Instagram) requestLogin(method, endpoint string, body io.Reader) (*http.Response, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest(method, endpoint, body)
 	if err != nil {
@@ -280,7 +280,7 @@ func (this *instagram) requestLogin(method, endpoint string, body io.Reader) (*h
 }
 
 // Main request for all other methods. Reading the authorization cookies.
-func (this *instagram) requestMain(method, endpoint string, body io.Reader) (*http.Response, error) {
+func (this *Instagram) requestMain(method, endpoint string, body io.Reader) (*http.Response, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest(method, endpoint, body)
 	if err != nil {
@@ -298,7 +298,7 @@ func (this *instagram) requestMain(method, endpoint string, body io.Reader) (*ht
 }
 
 // Request with five attempts re-login. Re-login if getting error 'login_required'.
-func (this *instagram) request(method, endpoint string, body io.Reader) ([]byte, error) {
+func (this *Instagram) request(method, endpoint string, body io.Reader) ([]byte, error) {
 
 	for attempt := 0; attempt < 5; attempt++ {
 
