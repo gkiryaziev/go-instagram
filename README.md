@@ -4,9 +4,7 @@
 
 ### Installation
 
-`go get -u github.com/gkiryaziev/instagram_api`
-
-`gb vendor fetch github.com/gkiryaziev/instagram_api`
+`go get -u github.com/gkiryaziev/go_instagram_api`
 
 ### Functions and description
 
