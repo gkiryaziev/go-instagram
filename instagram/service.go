@@ -19,6 +19,7 @@ const (
 	SIG_KEY_VERSION = "4"
 )
 
+// generateUUID return uuid
 func generateUUID(t bool) string {
 	u := uuid.New()
 	if !t {
@@ -27,6 +28,7 @@ func generateUUID(t bool) string {
 	return u
 }
 
+// generateSignature return signature
 func generateSignature(data []byte) string {
 	h := hmac.New(sha256.New, []byte(IG_SIG_KEY))
 	h.Write(data)
@@ -34,6 +36,7 @@ func generateSignature(data []byte) string {
 	return "ig_sig_key_version=" + SIG_KEY_VERSION + "&signed_body=" + hash + "." + url.QueryEscape(string(data))
 }
 
+// generateDeviceId return deviceId
 func generateDeviceId() string {
 	buffer := make([]byte, 32)
 	rand.Read(buffer)
