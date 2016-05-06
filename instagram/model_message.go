@@ -1,4 +1,4 @@
-package instagram_api
+package instagram
 
 type Message struct {
 	Status  string `json:"status"`

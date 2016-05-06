@@ -1,4 +1,4 @@
-package instagram_api
+package instagram
 
 // Search tags.
 type SearchTags struct {

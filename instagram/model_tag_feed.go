@@ -1,4 +1,4 @@
-package instagram_api
+package instagram
 
 // Get tagged media.
 type TagFeed struct {

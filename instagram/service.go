@@ -1,4 +1,4 @@
-package instagram_api
+package instagram
 
 import (
 	"crypto/hmac"

@@ -4,7 +4,7 @@
 
 ### Installation
 
-`go get -u github.com/gkiryaziev/golang-instagram-api`
+`go get -u github.com/gkiryaziev/go-instagram`
 
 ### Functions and description
 
