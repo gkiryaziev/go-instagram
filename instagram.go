@@ -11,14 +11,15 @@ import (
 	"time"
 )
 
+// Instagram struct
 type Instagram struct {
 	userName   string
 	password   string
 	token      string
 	isLoggedIn bool
 	uuid       string
-	deviceId   string
-	userNameId int64
+	deviceID   string
+	userNameID int64
 	rankToken  string
 	cookies    []*http.Cookie
 }
@@ -31,8 +32,8 @@ func NewInstagram(userName, password string) (*Instagram, error) {
 		token:      "",
 		isLoggedIn: false,
 		uuid:       generateUUID(true),
-		deviceId:   generateDeviceId(),
-		userNameId: 0,
+		deviceID:   generateDeviceID(),
+		userNameID: 0,
 		rankToken:  "",
 		cookies:    nil,
 	}
@@ -48,7 +49,7 @@ func NewInstagram(userName, password string) (*Instagram, error) {
 // Login to instagram.
 func (i *Instagram) Login() error {
 
-	fetch := API_URL + "/si/fetch_headers/?challenge_type=signup&guid=" + generateUUID(false)
+	fetch := APIURL + "/si/fetch_headers/?challenge_type=signup&guid=" + generateUUID(false)
 
 	resp, err := i.requestLogin("GET", fetch, nil)
 	if err != nil {
@@ -65,8 +66,8 @@ func (i *Instagram) Login() error {
 
 	// login
 	login := &Login{
-		DeviceId:          i.deviceId,
-		Guid:              i.uuid,
+		DeviceID:          i.deviceID,
+		GUID:              i.uuid,
 		UserName:          i.userName,
 		Password:          i.password,
 		Csrftoken:         i.token,
@@ -80,7 +81,7 @@ func (i *Instagram) Login() error {
 
 	signature := generateSignature(jsonData)
 
-	resp, err = i.requestLogin("POST", API_URL+"/accounts/login/?", bytes.NewReader([]byte(signature)))
+	resp, err = i.requestLogin("POST", APIURL+"/accounts/login/?", bytes.NewReader([]byte(signature)))
 	if err != nil {
 		return err
 	}
@@ -105,16 +106,16 @@ func (i *Instagram) Login() error {
 		return errors.New(object.Message)
 	}
 
-	i.userNameId = object.LoggedInUser.Pk
-	i.rankToken = strconv.FormatInt(i.userNameId, 10) + "_" + i.uuid
+	i.userNameID = object.LoggedInUser.Pk
+	i.rankToken = strconv.FormatInt(i.userNameID, 10) + "_" + i.uuid
 
 	return nil
 }
 
 // GetMediaLikers return media likers.
-func (i *Instagram) GetMediaLikers(mediaId string) (*MediaLikers, error) {
+func (i *Instagram) GetMediaLikers(mediaID string) (*MediaLikers, error) {
 
-	endpoint := API_URL + "/media/" + mediaId + "/likers/?"
+	endpoint := APIURL + "/media/" + mediaID + "/likers/?"
 
 	resp, err := i.request("GET", endpoint, nil)
 	if err != nil {
@@ -131,9 +132,9 @@ func (i *Instagram) GetMediaLikers(mediaId string) (*MediaLikers, error) {
 }
 
 // GetMedia return media comments.
-func (i *Instagram) GetMedia(mediaId string) (*Media, error) {
+func (i *Instagram) GetMedia(mediaID string) (*Media, error) {
 
-	endpoint := API_URL + "/media/" + mediaId + "/comments/?"
+	endpoint := APIURL + "/media/" + mediaID + "/comments/?"
 
 	resp, err := i.request("GET", endpoint, nil)
 	if err != nil {
@@ -152,7 +153,7 @@ func (i *Instagram) GetMedia(mediaId string) (*Media, error) {
 // GetRecentActivity return recent activity.
 func (i *Instagram) GetRecentActivity() (*RecentActivity, error) {
 
-	endpoint := API_URL + "/news/inbox/?"
+	endpoint := APIURL + "/news/inbox/?"
 
 	resp, err := i.request("GET", endpoint, nil)
 	if err != nil {
@@ -171,7 +172,7 @@ func (i *Instagram) GetRecentActivity() (*RecentActivity, error) {
 // SearchUsers return users.
 func (i *Instagram) SearchUsers(query string) (*SearchUsers, error) {
 
-	endpoint := API_URL + "/users/search/?ig_sig_key_version=" + SIG_KEY_VERSION +
+	endpoint := APIURL + "/users/search/?ig_sig_key_version=" + SIGKEYVERSION +
 		"&is_typeahead=true&query=" + query + "&rank_token=" + i.rankToken
 
 	resp, err := i.request("GET", endpoint, nil)
@@ -189,9 +190,9 @@ func (i *Instagram) SearchUsers(query string) (*SearchUsers, error) {
 }
 
 // GetUserNameInfo return username info.
-func (i *Instagram) GetUserNameInfo(userNameId int64) (*UserNameInfo, error) {
+func (i *Instagram) GetUserNameInfo(userNameID int64) (*UserNameInfo, error) {
 
-	endpoint := API_URL + "/users/" + strconv.FormatInt(userNameId, 10) + "/info/?"
+	endpoint := APIURL + "/users/" + strconv.FormatInt(userNameID, 10) + "/info/?"
 
 	resp, err := i.request("GET", endpoint, nil)
 	if err != nil {
@@ -208,9 +209,9 @@ func (i *Instagram) GetUserNameInfo(userNameId int64) (*UserNameInfo, error) {
 }
 
 // GetUserTags return user tags.
-func (i *Instagram) GetUserTags(userNameId int64) (*UserTags, error) {
+func (i *Instagram) GetUserTags(userNameID int64) (*UserTags, error) {
 
-	endpoint := API_URL + "/usertags/" + strconv.FormatInt(userNameId, 10) + "/feed/?rank_token=" +
+	endpoint := APIURL + "/usertags/" + strconv.FormatInt(userNameID, 10) + "/feed/?rank_token=" +
 		i.rankToken + "&ranked_content=false"
 
 	resp, err := i.request("GET", endpoint, nil)
@@ -230,7 +231,7 @@ func (i *Instagram) GetUserTags(userNameId int64) (*UserTags, error) {
 // SearchTags return tags.
 func (i *Instagram) SearchTags(query string) (*SearchTags, error) {
 
-	endpoint := API_URL + "/tags/search/?is_typeahead=true&q=" + query + "&rank_token=" + i.rankToken
+	endpoint := APIURL + "/tags/search/?is_typeahead=true&q=" + query + "&rank_token=" + i.rankToken
 
 	resp, err := i.request("GET", endpoint, nil)
 	if err != nil {
@@ -247,9 +248,9 @@ func (i *Instagram) SearchTags(query string) (*SearchTags, error) {
 }
 
 // TagFeed return tagged media.
-func (i *Instagram) TagFeed(tag, maxId string) (*TagFeed, error) {
+func (i *Instagram) TagFeed(tag, maxID string) (*TagFeed, error) {
 
-	endpoint := API_URL + "/feed/tag/" + tag + "/?rank_token=" + i.rankToken + "&ranked_content=false&max_id=" + maxId
+	endpoint := APIURL + "/feed/tag/" + tag + "/?rank_token=" + i.rankToken + "&ranked_content=false&max_id=" + maxID
 
 	resp, err := i.request("GET", endpoint, nil)
 	if err != nil {
@@ -272,7 +273,7 @@ func (i *Instagram) requestLogin(method, endpoint string, body io.Reader) (*http
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("User-Agent", USER_AGENT)
+	req.Header.Add("User-Agent", USERAGENT)
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -287,7 +288,7 @@ func (i *Instagram) requestMain(method, endpoint string, body io.Reader) (*http.
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("User-Agent", USER_AGENT)
+	req.Header.Add("User-Agent", USERAGENT)
 	for _, cookie := range i.cookies {
 		req.AddCookie(cookie)
 	}

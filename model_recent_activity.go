@@ -1,6 +1,6 @@
 package instagram
 
-// Get recent activity.
+// RecentActivity struct
 type RecentActivity struct {
 	Status               string                  `json:"status"`
 	NewStories           []RecentActivityStories `json:"new_stories"`
@@ -19,6 +19,7 @@ type RecentActivity struct {
 	Message      string      `json:"message"` // from Error
 }
 
+// RecentActivityStories struct
 type RecentActivityStories struct {
 	Pk     string `json:"pk"`
 	Counts struct {

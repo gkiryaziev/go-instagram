@@ -1,6 +1,6 @@
 package instagram
 
-// Get media comments.
+// Media struct
 type Media struct {
 	Status          string `json:"status"`
 	CaptionIsEdited bool   `json:"caption_is_edited"`
@@ -45,7 +45,7 @@ type Media struct {
 	Message      string `json:"message"` // from Error
 }
 
-// Get media likers.
+// MediaLikers struct
 type MediaLikers struct {
 	Status    string `json:"status"`
 	UserCount int    `json:"user_count"`

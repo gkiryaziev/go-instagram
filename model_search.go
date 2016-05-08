@@ -1,6 +1,6 @@
 package instagram
 
-// Search tags.
+// SearchTags struct
 type SearchTags struct {
 	HasMore interface{} `json:"has_more"`
 	Status  string      `json:"status"`
@@ -12,7 +12,7 @@ type SearchTags struct {
 	Message string `json:"message"` // from Error
 }
 
-// Search users.
+// SearchUsers struct
 type SearchUsers struct {
 	HasMore    bool   `json:"has_more"`
 	Status     string `json:"status"`

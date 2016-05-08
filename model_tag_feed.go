@@ -1,6 +1,6 @@
 package instagram
 
-// Get tagged media.
+// TagFeed struct
 type TagFeed struct {
 	RankedItems []struct {
 		Code     string `json:"code"`
@@ -70,6 +70,7 @@ type TagFeed struct {
 	Message       string `json:"message"` // from Error
 }
 
+// TagFeedImageVersions2 struct
 type TagFeedImageVersions2 struct {
 	Candidates []struct {
 		URL    string `json:"url"`
@@ -78,6 +79,7 @@ type TagFeedImageVersions2 struct {
 	} `json:"candidates"`
 }
 
+// TagFeedLocation struct
 type TagFeedLocation struct {
 	ExternalSource   string      `json:"external_source"`
 	City             string      `json:"city"`
@@ -92,6 +94,7 @@ type TagFeedLocation struct {
 	FoursquareV2ID   interface{} `json:"foursquare_v2_id"`
 }
 
+// TagFeedUser struct
 type TagFeedUser struct {
 	Username                   string `json:"username"`
 	HasAnonymousProfilePicture bool   `json:"has_anonymous_profile_picture"`
@@ -107,6 +110,7 @@ type TagFeedUser struct {
 	IsPrivate     bool   `json:"is_private"`
 }
 
+// TagFeedCaption struct
 type TagFeedCaption struct {
 	Status       string       `json:"status"`
 	UserID       int          `json:"user_id"`
@@ -121,6 +125,7 @@ type TagFeedCaption struct {
 	Type         int          `json:"type"`
 }
 
+// TagFeedComments struct
 type TagFeedComments struct {
 	Status       string       `json:"status"`
 	UserID       int          `json:"user_id"`
@@ -135,6 +140,7 @@ type TagFeedComments struct {
 	Type         int          `json:"type"`
 }
 
+// TagFeedUser2 struct
 type TagFeedUser2 struct {
 	Username      string `json:"username"`
 	Pk            int    `json:"pk"`

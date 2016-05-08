@@ -13,10 +13,14 @@ import (
 )
 
 const (
-	API_URL         = "https://i.instagram.com/api/v1"
-	USER_AGENT      = "Instagram 7.13.1 Android (23/6.0.1; 515dpi; 1440x2416; huawei/google; Nexus 6P; angler; angler; en_US)"
-	IG_SIG_KEY      = "8b46309eb680f272cc770d214b7dbe5f0c5d26b6cb82b0b740257360b43618f0"
-	SIG_KEY_VERSION = "4"
+	// APIURL api url
+	APIURL = "https://i.instagram.com/api/v1"
+	// USERAGENT user agent
+	USERAGENT = "Instagram 7.13.1 Android (23/6.0.1; 515dpi; 1440x2416; huawei/google; Nexus 6P; angler; angler; en_US)"
+	// IGSIGKEY ig sig key
+	IGSIGKEY = "8b46309eb680f272cc770d214b7dbe5f0c5d26b6cb82b0b740257360b43618f0"
+	// SIGKEYVERSION sig key version
+	SIGKEYVERSION = "4"
 )
 
 // generateUUID return uuid
@@ -30,14 +34,14 @@ func generateUUID(t bool) string {
 
 // generateSignature return signature
 func generateSignature(data []byte) string {
-	h := hmac.New(sha256.New, []byte(IG_SIG_KEY))
+	h := hmac.New(sha256.New, []byte(IGSIGKEY))
 	h.Write(data)
 	hash := hex.EncodeToString(h.Sum(nil))
-	return "ig_sig_key_version=" + SIG_KEY_VERSION + "&signed_body=" + hash + "." + url.QueryEscape(string(data))
+	return "ig_sig_key_version=" + SIGKEYVERSION + "&signed_body=" + hash + "." + url.QueryEscape(string(data))
 }
 
 // generateDeviceId return deviceId
-func generateDeviceId() string {
+func generateDeviceID() string {
 	buffer := make([]byte, 32)
 	rand.Read(buffer)
 	hash := md5.New()

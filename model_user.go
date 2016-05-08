@@ -1,6 +1,6 @@
 package instagram
 
-// Get user tags
+// UserTags struct
 type UserTags struct {
 	Status              string `json:"status"`
 	NumResults          int    `json:"num_results"`
@@ -100,7 +100,7 @@ type UserTags struct {
 	Message        string        `json:"message"` // from Error
 }
 
-// Get username info.
+// UserNameInfo struct
 type UserNameInfo struct {
 	Status string `json:"status"`
 	User   struct {
