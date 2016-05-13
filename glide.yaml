@@ -1,0 +1,3 @@
+package: github.com/gkiryaziev/go-instagram
+import:
+- package: github.com/pborman/uuid
