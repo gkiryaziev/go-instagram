@@ -3,11 +3,12 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/gkiryaziev/go-instagram)](https://goreportcard.com/report/github.com/gkiryaziev/go-instagram)
 
-### Installation
+### Install:
+```
+go get -u github.com/gkiryaziev/go-instagram
+```
 
-`go get -u github.com/gkiryaziev/go-instagram`
-
-### Functions and description
+### Functions and description:
 
 `NewInstagram(userName, password string) (*instagram, error)` Create a new object of Instagram. Constructor takes a `user name` and `password` as arguments and call `Login()` method after a successful initialization.
 
