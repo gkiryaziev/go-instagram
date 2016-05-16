@@ -1,4 +1,4 @@
-### Instagram's private API for [Go](www.golang.org) language
+### Instagram [private API](https://github.com/mgp25/Instagram-API) for [Go](www.golang.org) language
 ---
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/gkiryaziev/go-instagram)](https://goreportcard.com/report/github.com/gkiryaziev/go-instagram)
